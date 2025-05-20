@@ -1,0 +1,412 @@
+### Health Check
+GET http://localhost:5000/health
+
+### IMPORTANT: Before running these requests, make sure to set up your .env file with JWT secrets
+# Create a .env file in the backend directory with the following variables:
+# ACCESS_TOKEN_SECRET=your_access_token_secret_here
+# REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
+# 
+# You can generate secure random strings for these secrets using Node.js:
+# node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+
+### Register User
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "gamer@example.com",
+    "username": "gamer123",
+    "password": "password123"
+}
+
+### Register Admin
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "admin@gamestore.com",
+    "username": "admin",
+    "password": "admin123",
+    "role": "admin"
+}
+
+### Login
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@gamestore.com",
+    "password": "admin123"
+}
+
+### Get User Profile
+GET http://localhost:5000/api/auth/profile
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Update User Profile
+PUT http://localhost:5000/api/auth/profile
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "username": "gamer456",
+    "steamId": "gamer456id",
+    "street": "123 Gamer Street",
+    "city": "Bandung",
+    "zipCode": "40123",
+    "country": "Indonesia"
+}
+
+### Get Games (Public)
+GET http://localhost:5000/api/games
+
+### Get Games with Filters and Pagination
+GET http://localhost:5000/api/games?category=RPG&platform=PS5&minPrice=100000&maxPrice=500000&page=1&limit=10
+
+### Search Games
+GET http://localhost:5000/api/games/search?query=Final Fantasy
+
+### Get Game by ID
+GET http://localhost:5000/api/games/1
+
+### Get Game Categories
+GET http://localhost:5000/api/games/categories
+
+### Get Game Platforms
+GET http://localhost:5000/api/games/platforms
+
+### Create Game (Admin only)
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQwOjMzLjAwMFoiLCJpYXQiOjE3NDc3NTU3NDIsImV4cCI6MTc0Nzc1NzU0Mn0.t5mJkTWdVpLPl8L15xyTp4m9Y5Ay9mDb7BpQ3TgmMco
+Content-Type: application/json
+
+{
+    "title": "Final Fantasy XVI",
+    "description": "The latest entry in the Final Fantasy series",
+    "price": 799000,
+    "category": "RPG",
+    "platform": "PS5",
+    "publisher": "Square Enix",
+    "releaseDate": "2023-06-22",
+    "imageUrl": "https://image.api.playstation.com/vulcan/ap/rnd/202211/1009/oehAww2ytCqKnxk12h74Hx7y.jpg",
+    "featured": true,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 50
+}
+
+### Update Game (Admin only)
+PUT http://localhost:5000/api/games/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQwOjMzLjAwMFoiLCJpYXQiOjE3NDc3NTU3NDIsImV4cCI6MTc0Nzc1NzU0Mn0.t5mJkTWdVpLPl8L15xyTp4m9Y5Ay9mDb7BpQ3TgmMco
+Content-Type: application/json
+
+{
+    "price": 749000,
+    "stock": 45
+}
+
+### Delete Game (Admin only)
+DELETE http://localhost:5000/api/games/14
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQwOjMzLjAwMFoiLCJpYXQiOjE3NDc3NTU3NDIsImV4cCI6MTc0Nzc1NzU0Mn0.t5mJkTWdVpLPl8L15xyTp4m9Y5Ay9mDb7BpQ3TgmMco
+
+### Get All Transactions (Admin only)
+GET http://localhost:5000/api/transactions
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get User Transactions
+GET http://localhost:5000/api/transactions
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Transaction by ID
+GET http://localhost:5000/api/transactions/1
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Create Transaction (Physical Game)
+POST http://localhost:5000/api/transactions
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "games": [
+        {"gameId": 1, "quantity": 1, "type": "fisik"}
+    ],
+    "paymentMethod": "Credit Card",
+    "deliveryType": "fisik",
+    "street": "123 Gamer Street",
+    "city": "Bandung",
+    "zipCode": "40123",
+    "country": "Indonesia"
+}
+
+### Create Transaction (Digital Game)
+POST http://localhost:5000/api/transactions
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "games": [
+        {"gameId": 2, "quantity": 1, "type": "digital"}
+    ],
+    "paymentMethod": "PayPal",
+    "deliveryType": "digital",
+    "steamId": "gamer123id"
+}
+
+### Update Transaction Status (Admin only)
+PUT http://localhost:5000/api/transactions/1/status
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "status": "completed"
+}
+
+### Cancel Transaction
+PUT http://localhost:5000/api/transactions/1/cancel
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get User Notifications
+GET http://localhost:5000/api/notifications
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Mark Notification as Read
+PUT http://localhost:5000/api/notifications/1/read
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Mark All Notifications as Read
+PUT http://localhost:5000/api/notifications/read-all
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Featured Games
+GET http://localhost:5000/api/games?featured=true
+
+### Create Featured Game (Admin only)
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQwOjMzLjAwMFoiLCJpYXQiOjE3NDc3NTU3NDIsImV4cCI6MTc0Nzc1NzU0Mn0.t5mJkTWdVpLPl8L15xyTp4m9Y5Ay9mDb7BpQ3TgmMco
+Content-Type: application/json
+
+{
+    "title": "The Last of Us Part II",
+    "description": "A story of revenge set in a post-apocalyptic United States",
+    "price": 699000,
+    "category": "Action-Adventure",
+    "platform": "PS4",
+    "releaseDate": "2020-06-19",
+    "publisher": "Sony Interactive Entertainment",
+    "imageUrl": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2531310/header.jpg?t=1746152571",
+    "featured": true,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 30
+}
+
+### Update Game Featured Status (Admin only)
+PUT http://localhost:5000/api/games/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "imageUrl": "https://image.api.playstation.com/vulcan/ap/rnd/202211/1009/oehAww2ytCqKnxk12h74Hx7y.jpg"
+}
+
+### Add Dummy Game 1: Elden Ring
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "Elden Ring",
+    "description": "An action RPG developed by FromSoftware and published by Bandai Namco Entertainment, in collaboration with fantasy novelist George R. R. Martin.",
+    "price": 850000,
+    "category": "Action RPG",
+    "platform": "PS5/PC",
+    "releaseDate": "2022-02-25",
+    "publisher": "Bandai Namco",
+    "imageUrl": "https://image.api.playstation.com/vulcan/ap/rnd/202110/2000/phvVT0qZfcRms5qDAk0SI3CM.png",
+    "featured": true,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 35
+}
+
+### Add Dummy Game 2: Spider-Man Miles Morales
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "Spider-Man: Miles Morales",
+    "description": "Experience the rise of Miles Morales as the new hero masters incredible powers to become his own Spider-Man.",
+    "price": 699000,
+    "category": "Action-Adventure",
+    "platform": "PS5",
+    "releaseDate": "2020-11-12",
+    "publisher": "Sony Interactive Entertainment",
+    "imageUrl": "https://image.api.playstation.com/vulcan/ap/rnd/202008/1020/T45iRN1bhiWcJUzST6UFGBvO.png",
+    "featured": true,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 28
+}
+
+### Add Dummy Game 3: Zelda Tears of the Kingdom
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "The Legend of Zelda: Tears of the Kingdom",
+    "description": "The sequel to The Legend of Zelda: Breath of the Wild, taking Link on a new adventure through Hyrule and the skies above.",
+    "price": 899000,
+    "category": "Action-Adventure",
+    "platform": "Nintendo Switch",
+    "releaseDate": "2023-05-12",
+    "publisher": "Nintendo",
+    "imageUrl": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/en_US/games/switch/t/the-legend-of-zelda-tears-of-the-kingdom-switch/hero",
+    "featured": true,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 42
+}
+
+### Add Dummy Game 4: Call of Duty Modern Warfare II
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "Call of Duty: Modern Warfare II",
+    "description": "The sequel to 2019's Modern Warfare, featuring a global campaign, immersive multiplayer combat and a Special Ops tactical co-op mode.",
+    "price": 799000,
+    "category": "FPS",
+    "platform": "PS5/Xbox Series X",
+    "releaseDate": "2022-10-28",
+    "publisher": "Activision",
+    "imageUrl": "https://cdnpro.eraspace.com/media/mageplaza/blog/post/g/a/gamecodmw.jpg",
+    "featured": false,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 50
+}
+
+### Add Dummy Game 5: FIFA 23
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "FIFA 23",
+    "description": "Experience the world's game with FIFA 23, featuring HyperMotion2 Technology, both men's and women's FIFA World Cup tournaments, and more.",
+    "price": 659000,
+    "category": "Sports",
+    "platform": "PS5/Xbox Series X",
+    "releaseDate": "2022-09-30",
+    "publisher": "Electronic Arts",
+    "imageUrl": "https://cdn.rri.co.id/berita/96/images/1665974060-EGS_EASPORTSFIFA23StandardEdition_EACanada_S1_2560x1440-aaf9c5273c27a485f2cce8cb7e804f5c.jpg",
+    "featured": true,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 65
+}
+
+### Add Dummy Game 6: Resident Evil 4 Remake
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "Resident Evil 4 Remake",
+    "description": "A remake of the 2005 classic survival horror game, featuring modernized gameplay, stunning visuals, and a reimagined storyline.",
+    "price": 759000,
+    "category": "Horror",
+    "platform": "PS5/Xbox Series X",
+    "releaseDate": "2023-03-24",
+    "publisher": "Capcom",
+    "imageUrl": "https://image.api.playstation.com/vulcan/ap/rnd/202207/2509/85p2Dwh5iDhUzRKe40QeNYh3.png",
+    "featured": true,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 38
+}
+
+### Add Dummy Game 7: Cyberpunk 2077
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "Cyberpunk 2077",
+    "description": "An open-world, action-adventure RPG set in Night City, a megalopolis obsessed with power, glamour and body modification.",
+    "price": 599000,
+    "category": "RPG",
+    "platform": "PS5/Xbox Series X/PC",
+    "releaseDate": "2020-12-10",
+    "publisher": "CD Projekt",
+    "imageUrl": "https://images.gog-statics.com/c75e674590b8947542c809924df30bbef2190341163dd08668e243c266be70c5_product_card_v2_mobile_slider_639.jpg",
+    "featured": false,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 25
+}
+
+### Add Dummy Game 8: Animal Crossing New Horizons
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "Animal Crossing: New Horizons",
+    "description": "Build your community from scratch on a deserted island and customize your character, home, and island as you create your personal paradise.",
+    "price": 750000,
+    "category": "Simulation",
+    "platform": "Nintendo Switch",
+    "releaseDate": "2020-03-20",
+    "publisher": "Nintendo",
+    "imageUrl": "https://cdn.sortiraparis.com/images/80/88384/1131839-animal-crossing-pocket-camp-complete.jpg",
+    "featured": true,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 32
+}
+
+### Add Dummy Game 9: Halo Infinite
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "Halo Infinite",
+    "description": "Master Chief returns in the next chapter of the legendary Halo series, featuring a new campaign and free-to-play multiplayer experience.",
+    "price": 699000,
+    "category": "FPS",
+    "platform": "Xbox Series X/PC",
+    "releaseDate": "2021-12-08",
+    "publisher": "Xbox Game Studios",
+    "imageUrl": "https://store-images.s-microsoft.com/image/apps.50670.13727851868390641.c9cc5f66-aff8-406c-af6b-440838730be0.d205e025-5444-4eb1-ae46-571ae6895928?q=90&w=480&h=270",
+    "featured": false,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 40
+}
+
+### Add Dummy Game 10: Monster Hunter Rise
+POST http://localhost:5000/api/games
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQyOjIyLjAwMFoiLCJpYXQiOjE3NDc3NTU4NTIsImV4cCI6MTc0Nzc1NzY1Mn0.RRLRNe-kURXmdRgajrIXBx_NoLA_AYAFEy5rhoTNtoA
+Content-Type: application/json
+
+{
+    "title": "Monster Hunter Rise",
+    "description": "Hunt, craft and survive in this action RPG where you face off against fearsome monsters in a fantasy world inspired by feudal Japan.",
+    "price": 629000,
+    "category": "Action RPG",
+    "platform": "Nintendo Switch/PC",
+    "releaseDate": "2021-03-26",
+    "publisher": "Capcom",
+    "imageUrl": "https://image.api.playstation.com/vulcan/ap/rnd/202212/0205/DrHHLm1wEmIEfzlJj0csXqnm.jpg",
+    "featured": false,
+    "hasFisik": true,
+    "hasDigital": true,
+    "stock": 30
+}
+
+

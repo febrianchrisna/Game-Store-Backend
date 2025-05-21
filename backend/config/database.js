@@ -15,13 +15,22 @@ export const syncDatabase = async () => {
         await db.authenticate();
         console.log('Database connection has been established successfully.');
         
-        // Sync all models - force:true will drop tables if they exist
-        // Use { force: true } only in development and with caution
-        // For production or existing databases use { alter: true }
-        await db.sync({ alter: true });
-        console.log('All models were synchronized successfully.');
+        // Instead of altering tables automatically, just sync without altering
+        // This avoids adding more keys to tables that already have a lot of indexes
+        await db.sync({ alter: false });
+        console.log('Database synchronized successfully.');
+        
+        // For development environments only - uncomment if you need to reset the DB:
+        // To reset all tables, use:
+        // await db.sync({ force: true });
+        // console.log('All tables were dropped and re-created.');
     } catch (error) {
         console.error('Unable to connect to the database or sync models:', error);
+        // Log more details about the error
+        if (error.name === 'SequelizeDatabaseError') {
+            console.error('Database error details:', error.original.sqlMessage);
+            console.error('SQL query that caused the error:', error.sql);
+        }
     }
 };
 

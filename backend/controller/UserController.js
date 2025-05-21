@@ -36,7 +36,18 @@ async function getUser(req, res) {
 async function updateUserProfile(req, res) {
   try {
     const userId = req.userId;
-    const { username, profilePicture, steamId, street, city, zipCode, country } = req.body;
+    const { 
+      username, 
+      email, 
+      currentPassword, 
+      newPassword, 
+      profilePicture, 
+      steamId, 
+      street, 
+      city, 
+      zipCode, 
+      country 
+    } = req.body;
     
     // Find the user
     const user = await User.findByPk(userId);
@@ -45,16 +56,91 @@ async function updateUserProfile(req, res) {
       return res.status(404).json({ message: "User not found" });
     }
     
+    // Create an update object
+    const updateData = {};
+    
+    // Handle username update
+    if (username && username !== user.username) {
+      // Check if username is already taken
+      const existingUser = await User.findOne({ where: { username } });
+      if (existingUser && existingUser.id !== userId) {
+        return res.status(400).json({ 
+          status: "Error", 
+          message: "Username already taken" 
+        });
+      }
+      updateData.username = username;
+    }
+    
+    // Handle email update
+    if (email && email !== user.email) {
+      // Validate email format
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        return res.status(400).json({ 
+          status: "Error", 
+          message: "Invalid email format" 
+        });
+      }
+      
+      // Check if email is already registered
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser && existingUser.id !== userId) {
+        return res.status(400).json({ 
+          status: "Error", 
+          message: "Email already registered" 
+        });
+      }
+      updateData.email = email;
+    }
+    
+    // Handle password update
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ 
+          status: "Error", 
+          message: "Current password is required to set a new password" 
+        });
+      }
+      
+      // Verify current password
+      const validPassword = await bcrypt.compare(currentPassword, user.password);
+      if (!validPassword) {
+        return res.status(400).json({ 
+          status: "Error", 
+          message: "Current password is incorrect" 
+        });
+      }
+      
+      // Validate new password strength (at least 6 characters)
+      if (newPassword.length < 6) {
+        return res.status(400).json({ 
+          status: "Error", 
+          message: "New password must be at least 6 characters long" 
+        });
+      }
+      
+      // Hash the new password
+      updateData.password = await bcrypt.hash(newPassword, 10);
+    }
+    
+    // Update profile details
+    if (profilePicture) updateData.profilePicture = profilePicture;
+    if (steamId) updateData.steamId = steamId;
+    if (street) updateData.street = street;
+    if (city) updateData.city = city;
+    if (zipCode) updateData.zipCode = zipCode;
+    if (country) updateData.country = country;
+    
+    // If no fields to update, return early
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({
+        status: "Error",
+        message: "No valid fields provided for update"
+      });
+    }
+    
     // Update user fields
-    const updatedUser = await user.update({
-      username: username || user.username,
-      profilePicture: profilePicture || user.profilePicture,
-      steamId: steamId || user.steamId,
-      street: street || user.street,
-      city: city || user.city,
-      zipCode: zipCode || user.zipCode,
-      country: country || user.country
-    });
+    const updatedUser = await user.update(updateData);
     
     // Return updated user without sensitive information
     const { password: _, refresh_token: __, ...safeUserData } = updatedUser.toJSON();

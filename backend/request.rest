@@ -43,17 +43,55 @@ Content-Type: application/json
 GET http://localhost:5000/api/auth/profile
 Authorization: Bearer YOUR_TOKEN_HERE
 
-### Update User Profile
+### Update User Profile - Basic Info
+PUT http://localhost:5000/api/auth/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlcm5hbWUiOiJqZWFuIiwiZW1haWwiOiJqQGdtYWlsLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiY3VzdG9tZXIiLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE4OjUxOjQ5LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIxVDA2OjAyOjM3LjAwMFoiLCJpYXQiOjE3NDc4MDc5NDMsImV4cCI6MTc0NzgwOTc0M30.j_7etQKxeN3SBUTXyQEf1thS-jDyiRQWaRl7P-4bfHE
+Content-Type: application/json
+
+{
+    "username": "jean_updated",
+    "profilePicture": "https://example.com/avatar.jpg",
+    "steamId": "jean_steamid",
+    "street": "123 Gamer Street",
+    "city": "Bandung",
+    "zipCode": "40123",
+    "country": "Indonesia"
+}
+
+### Update User Profile - Change Email
 PUT http://localhost:5000/api/auth/profile
 Authorization: Bearer YOUR_TOKEN_HERE
 Content-Type: application/json
 
 {
-    "username": "gamer456",
-    "steamId": "gamer456id",
-    "street": "123 Gamer Street",
-    "city": "Bandung",
-    "zipCode": "40123",
+    "email": "newemail@example.com"
+}
+
+### Update User Profile - Change Password
+PUT http://localhost:5000/api/auth/profile
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "currentPassword": "123123",
+    "newPassword": "newPassword123"
+}
+
+### Update User Profile - Complete Update
+PUT http://localhost:5000/api/auth/profile
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "username": "newUsername",
+    "email": "newemail@example.com",
+    "currentPassword": "123123",
+    "newPassword": "newPassword123",
+    "profilePicture": "https://example.com/avatar2.jpg",
+    "steamId": "new_steam_id",
+    "street": "456 New Street",
+    "city": "Jakarta",
+    "zipCode": "10110",
     "country": "Indonesia"
 }
 

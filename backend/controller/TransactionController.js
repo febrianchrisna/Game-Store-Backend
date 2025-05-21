@@ -38,13 +38,35 @@ export const getUserTransactions = async (req, res) => {
             include: [
                 {
                     model: TransactionDetail,
-                    include: [Game]
+                    include: [
+                        {
+                            model: Game,
+                            attributes: ['id', 'title', 'price', 'imageUrl', 'platform']
+                        }
+                    ]
                 }
             ],
             order: [['createdAt', 'DESC']]
         });
         
-        res.status(200).json(transactions);
+        // Format the response to make game details more accessible
+        const formattedTransactions = transactions.map(transaction => {
+            const plainTransaction = transaction.get({ plain: true });
+            
+            // Add game details directly to transaction_details for easier frontend access
+            plainTransaction.transaction_details = plainTransaction.transaction_details.map(detail => {
+                return {
+                    ...detail,
+                    gameTitle: detail.game.title,
+                    gameImage: detail.game.imageUrl,
+                    gamePlatform: detail.game.platform
+                };
+            });
+            
+            return plainTransaction;
+        });
+        
+        res.status(200).json(formattedTransactions);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -58,7 +80,12 @@ export const getTransactionById = async (req, res) => {
             include: [
                 {
                     model: TransactionDetail,
-                    include: [Game]
+                    include: [
+                        {
+                            model: Game,
+                            attributes: ['id', 'title', 'price', 'imageUrl', 'platform']
+                        }
+                    ]
                 },
                 {
                     association: 'user',
@@ -73,7 +100,20 @@ export const getTransactionById = async (req, res) => {
 
         // Admin can access all transactions, users only their own
         if (req.userRole === 'admin' || req.userId === transaction.userId) {
-            return res.status(200).json(transaction);
+            // Format the transaction to make game details more accessible
+            const plainTransaction = transaction.get({ plain: true });
+            
+            // Add game details directly to transaction_details
+            plainTransaction.transaction_details = plainTransaction.transaction_details.map(detail => {
+                return {
+                    ...detail,
+                    gameTitle: detail.game.title,
+                    gameImage: detail.game.imageUrl,
+                    gamePlatform: detail.game.platform
+                };
+            });
+            
+            return res.status(200).json(plainTransaction);
         } else {
             return res.status(403).json({ message: 'Not authorized to view this transaction' });
         }
@@ -399,32 +439,48 @@ export const updateTransaction = async (req, res) => {
             });
         }
         
-        // Validate that required fields are present based on delivery type
+        // Create an update object based on what was provided
+        const updateData = {};
+        
+        // Always allow payment method updates regardless of delivery type
+        if (paymentMethod) {
+            updateData.paymentMethod = paymentMethod;
+        }
+        
+        // Handle address fields updates for physical delivery
         if (transaction.deliveryType === 'fisik' || transaction.deliveryType === 'keduanya') {
-            if (!street || !city || !zipCode || !country) {
-                return res.status(400).json({ 
-                    message: 'Shipping address is required for physical deliveries'
-                });
+            // If any address field is provided, validate all are present
+            if (street || city || zipCode || country) {
+                if (!street || !city || !zipCode || !country) {
+                    return res.status(400).json({ 
+                        message: 'All shipping address fields (street, city, zipCode, country) are required when updating address'
+                    });
+                }
+                
+                // All fields are present, add to update
+                updateData.street = street;
+                updateData.city = city;
+                updateData.zipCode = zipCode;
+                updateData.country = country;
             }
         }
         
+        // Handle Steam ID updates for digital delivery
         if (transaction.deliveryType === 'digital' || transaction.deliveryType === 'keduanya') {
-            if (!steamId) {
-                return res.status(400).json({ 
-                    message: 'Steam ID is required for digital deliveries'
-                });
+            if (steamId) {
+                updateData.steamId = steamId;
             }
+        }
+        
+        // Ensure there's something to update
+        if (Object.keys(updateData).length === 0) {
+            return res.status(400).json({ 
+                message: 'No valid fields to update were provided'
+            });
         }
         
         // Update the transaction
-        await transaction.update({
-            paymentMethod: paymentMethod || transaction.paymentMethod,
-            steamId: steamId || transaction.steamId,
-            street: street || transaction.street,
-            city: city || transaction.city,
-            zipCode: zipCode || transaction.zipCode,
-            country: country || transaction.country
-        });
+        await transaction.update(updateData);
         
         // Create notification about the update
         await Notification.create({

@@ -35,7 +35,7 @@ router.put("/api/games/:id", verifyToken, isAdmin, updateGame);
 router.delete("/api/games/:id", verifyToken, isAdmin, deleteGame);
 
 // Transaction Status management (admin only)
-router.get("/api/transactions", verifyToken, isAdmin, getAllTransactions);
+router.get("/api/admin/transactions", verifyToken, isAdmin, getAllTransactions);
 router.put("/api/transactions/:id/status", verifyToken, isAdmin, updateTransactionStatus);
 
 // ==================== USER ROUTES (khusus user) ====================

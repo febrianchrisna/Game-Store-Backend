@@ -35,8 +35,8 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "admin@gamestore.com",
-    "password": "admin123"
+    "email": "j@gmail.com",
+    "password": "123123"
 }
 
 ### Get User Profile
@@ -110,12 +110,12 @@ DELETE http://localhost:5000/api/games/14
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AZ2FtZXN0b3JlLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiYWRtaW4iLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjMzOjM3LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIwVDE1OjQwOjMzLjAwMFoiLCJpYXQiOjE3NDc3NTU3NDIsImV4cCI6MTc0Nzc1NzU0Mn0.t5mJkTWdVpLPl8L15xyTp4m9Y5Ay9mDb7BpQ3TgmMco
 
 ### Get All Transactions (Admin only)
-GET http://localhost:5000/api/transactions
-Authorization: Bearer YOUR_TOKEN_HERE
+GET http://localhost:5000/api/admin/transactions
+Authorization: Bearer YOUR_ADMIN_TOKEN_HERE
 
 ### Get User Transactions
 GET http://localhost:5000/api/transactions
-Authorization: Bearer YOUR_TOKEN_HERE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwidXNlcm5hbWUiOiJqZWFuIiwiZW1haWwiOiJqQGdtYWlsLmNvbSIsInByb2ZpbGVQaWN0dXJlIjpudWxsLCJzdGVhbUlkIjpudWxsLCJzdHJlZXQiOm51bGwsImNpdHkiOm51bGwsInppcENvZGUiOm51bGwsImNvdW50cnkiOiJJbmRvbmVzaWEiLCJyb2xlIjoiY3VzdG9tZXIiLCJjcmVhdGVkQXQiOiIyMDI1LTA1LTIwVDE4OjUxOjQ5LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTA1LTIxVDA1OjExOjU5LjAwMFoiLCJpYXQiOjE3NDc4MDQzMjAsImV4cCI6MTc0NzgwNjEyMH0.HO4md8X0OoKLZmIJie0nphTKTzWI--1V2XZxLeTgE3g
 
 ### Get Transaction by ID
 GET http://localhost:5000/api/transactions/1

@@ -286,8 +286,8 @@ export const updateTransactionStatus = async (req, res) => {
     }
 };
 
-// Cancel transaction (user only)
-export const cancelTransaction = async (req, res) => {
+// Delete transaction (user only) - replacing cancelTransaction
+export const deleteTransaction = async (req, res) => {
     const dbTransaction = await db.transaction();
     
     try {
@@ -302,17 +302,17 @@ export const cancelTransaction = async (req, res) => {
         
         // Verify the transaction belongs to the logged-in user
         if (transaction.userId !== userId && req.userRole !== 'admin') {
-            return res.status(403).json({ message: 'Not authorized to modify this transaction' });
+            return res.status(403).json({ message: 'Not authorized to delete this transaction' });
         }
         
-        // Check if the transaction is in a status that can be cancelled
-        if (transaction.status === 'completed' || transaction.status === 'cancelled') {
+        // Only pending transactions can be deleted
+        if (transaction.status !== 'pending') {
             return res.status(400).json({ 
-                message: `Cannot cancel a transaction that is already ${transaction.status}` 
+                message: `Cannot delete a transaction that is already ${transaction.status}` 
             });
         }
         
-        // Handle stock restoration for cancelled transactions with physical games
+        // Handle stock restoration for deleted transactions with physical games
         const transactionDetails = await TransactionDetail.findAll({
             where: { transactionId: transaction.id },
             include: [Game]
@@ -332,15 +332,21 @@ export const cancelTransaction = async (req, res) => {
                 }
             }
             
-            // Update transaction status
-            await transaction.update({ status: 'cancelled' }, { dbTransaction });
+            // Delete transaction details first (foreign key constraint)
+            await TransactionDetail.destroy({
+                where: { transactionId: transaction.id },
+                transaction: dbTransaction
+            });
+            
+            // Delete the transaction itself
+            await transaction.destroy({ transaction: dbTransaction });
             
             // Create notification
             await Notification.create({
                 userId,
-                title: 'Transaction Cancelled',
-                message: `Your order #${transaction.id} has been cancelled.`,
-                type: 'transaction_cancelled',
+                title: 'Transaction Deleted',
+                message: `Your order #${transaction.id} has been deleted.`,
+                type: 'transaction_deleted',
                 isRead: false
             }, { transaction: dbTransaction });
             
@@ -351,7 +357,86 @@ export const cancelTransaction = async (req, res) => {
         }
         
         res.status(200).json({
-            message: 'Transaction cancelled successfully',
+            message: 'Transaction deleted successfully'
+        });
+    } catch (error) {
+        await dbTransaction.rollback();
+        console.error(error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// Update transaction payment and delivery info (user only)
+export const updateTransaction = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const transactionId = req.params.id;
+        const { 
+            paymentMethod, 
+            steamId, 
+            street, 
+            city, 
+            zipCode, 
+            country 
+        } = req.body;
+        
+        // Find the transaction
+        const transaction = await Transaction.findByPk(transactionId);
+        
+        if (!transaction) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+        
+        // Verify the transaction belongs to the logged-in user
+        if (transaction.userId !== userId && req.userRole !== 'admin') {
+            return res.status(403).json({ message: 'Not authorized to update this transaction' });
+        }
+        
+        // Only pending transactions can be updated
+        if (transaction.status !== 'pending') {
+            return res.status(400).json({ 
+                message: `Cannot update a transaction that is already ${transaction.status}` 
+            });
+        }
+        
+        // Validate that required fields are present based on delivery type
+        if (transaction.deliveryType === 'fisik' || transaction.deliveryType === 'keduanya') {
+            if (!street || !city || !zipCode || !country) {
+                return res.status(400).json({ 
+                    message: 'Shipping address is required for physical deliveries'
+                });
+            }
+        }
+        
+        if (transaction.deliveryType === 'digital' || transaction.deliveryType === 'keduanya') {
+            if (!steamId) {
+                return res.status(400).json({ 
+                    message: 'Steam ID is required for digital deliveries'
+                });
+            }
+        }
+        
+        // Update the transaction
+        await transaction.update({
+            paymentMethod: paymentMethod || transaction.paymentMethod,
+            steamId: steamId || transaction.steamId,
+            street: street || transaction.street,
+            city: city || transaction.city,
+            zipCode: zipCode || transaction.zipCode,
+            country: country || transaction.country
+        });
+        
+        // Create notification about the update
+        await Notification.create({
+            userId,
+            title: 'Transaction Updated',
+            message: `Your order #${transaction.id} information has been updated.`,
+            type: 'transaction_updated',
+            isRead: false
+        });
+        
+        res.status(200).json({
+            message: 'Transaction updated successfully',
             transaction
         });
     } catch (error) {

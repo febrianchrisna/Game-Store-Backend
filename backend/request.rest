@@ -161,9 +161,22 @@ Content-Type: application/json
     "status": "completed"
 }
 
-### Cancel Transaction
-PUT http://localhost:5000/api/transactions/1/cancel
+### Delete Transaction (replacement for Cancel)
+DELETE http://localhost:5000/api/transactions/1
 Authorization: Bearer YOUR_TOKEN_HERE
+
+### Update Transaction Payment & Address
+PUT http://localhost:5000/api/transactions/1
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "paymentMethod": "Bank Transfer",
+    "street": "456 Updated Street",
+    "city": "Jakarta",
+    "zipCode": "10110",
+    "country": "Indonesia"
+}
 
 ### Get User Notifications
 GET http://localhost:5000/api/notifications

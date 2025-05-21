@@ -7,7 +7,7 @@ import {
 } from '../controller/GameController.js';
 import { 
     getAllTransactions, getUserTransactions, getTransactionById, 
-    createTransaction, updateTransactionStatus, cancelTransaction
+    createTransaction, updateTransactionStatus, deleteTransaction, updateTransaction
 } from '../controller/TransactionController.js';
 import { 
     getUserNotifications, markNotificationAsRead, markAllNotificationsAsRead 
@@ -50,7 +50,8 @@ router.get("/api/games/:id", getGameById);
 router.get("/api/transactions", verifyToken, getUserTransactions);
 router.get("/api/transactions/:id", verifyToken, getTransactionById);
 router.post("/api/transactions", verifyToken, createTransaction);
-router.put("/api/transactions/:id/cancel", verifyToken, cancelTransaction);
+router.put("/api/transactions/:id", verifyToken, updateTransaction); // Updated route for editing payment/address
+router.delete("/api/transactions/:id", verifyToken, deleteTransaction); // Changed from PUT to DELETE
 
 // Notification routes
 router.get("/api/notifications", verifyToken, getUserNotifications);
